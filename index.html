@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Khalid Alruqi — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --surface2: #1a1a24;
+      --accent: #00e5ff;
+      --accent2: #7b61ff;
+      --accent3: #ff6b6b;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --border: rgba(255,255,255,0.06);
+      --glow: 0 0 40px rgba(0, 229, 255, 0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom Cursor */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transition: all 0.25s ease;
+      opacity: 0.5;
+    }
+
+    /* Noise Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* Grid Background */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── NAV ─────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px;
+      background: rgba(10,10,15,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ─── HERO ─────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 60px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content { max-width: 900px; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(0,229,255,0.2);
+      padding: 6px 16px;
+      border-radius: 2px;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fade-up 0.6s 0.2s forwards;
+    }
+
+    .hero-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fade-up 0.7s 0.35s forwards;
+    }
+
+    .hero-name span {
+      display: block;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title {
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fade-up 0.7s 0.5s forwards;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(232,232,240,0.7);
+      max-width: 560px;
+      margin-bottom: 56px;
+      opacity: 0;
+      animation: fade-up 0.7s 0.65s forwards;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fade-up 0.7s 0.8s forwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.25s;
+      cursor: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0f;
+      font-weight: 500;
+    }
+    .btn-primary:hover {
+      background: #fff;
+      box-shadow: var(--glow);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: transparent;
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Glowing orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .orb-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      animation: float 8s ease-in-out infinite;
+    }
+    .orb-2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(123,97,255,0.07) 0%, transparent 70%);
+      bottom: 0; left: 200px;
+      animation: float 10s ease-in-out infinite reverse;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-30px); }
+    }
+
+    /* ─── SECTION ─────────────────────────── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 100px 60px;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.01em;
+      margin-bottom: 64px;
+    }
+
+    /* ─── SKILLS ─────────────────────────── */
+    #skills { background: var(--surface); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .skill-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 28px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .skill-card:hover {
+      border-color: rgba(0,229,255,0.3);
+      transform: translateY(-4px);
+    }
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s;
+    }
+    .skill-card:hover::before { transform: scaleX(1); }
+
+    .skill-icon {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+    }
+
+    .skill-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .skill-bar-track {
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .skill-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: bar-grow 1s ease forwards;
+      animation-delay: var(--delay, 0.3s);
+    }
+
+    @keyframes bar-grow {
+      to { transform: scaleX(1); }
+    }
+
+    .skill-pct {
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── EDUCATION ─────────────────────────── */
+    .edu-card {
+      display: flex;
+      gap: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 36px;
+      border-radius: 4px;
+      max-width: 720px;
+      transition: border-color 0.3s;
+    }
+    .edu-card:hover { border-color: rgba(0,229,255,0.25); }
+
+    .edu-year {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      white-space: nowrap;
+    }
+
+    .edu-body {}
+    .edu-degree {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    .edu-school {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-bottom: 16px;
+    }
+    .edu-tag {
+      display: inline-block;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.15);
+      color: var(--accent);
+      font-size: 0.65rem;
+      padding: 4px 12px;
+      border-radius: 2px;
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── CERTIFICATES ─────────────────────────── */
+    #certificates { background: var(--surface); }
+
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .cert-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 28px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .cert-card:hover {
+      border-color: rgba(0,229,255,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .cert-issuer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .cisco-badge {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #049fd9, #0066cc);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.05em;
+    }
+
+    .cert-issuer-text {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .cert-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .cert-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .cert-date { color: var(--accent); }
+
+    .cert-id {
+      font-size: 0.55rem;
+      opacity: 0.5;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ─── CONTACT ─────────────────────────── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      max-width: 860px;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.25s;
+    }
+    .contact-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .contact-icon {
+      width: 36px; height: 36px;
+      background: var(--surface2);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .contact-info {}
+    .contact-type {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .contact-value {
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── FOOTER ─────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 32px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-copy {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .footer-tag {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .footer-tag span { color: var(--accent); }
+
+    /* ─── ANIMATIONS ─────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── SCROLLBAR ─────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ─── RESPONSIVE ─────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links, .nav-status { display: none; }
+      .hero, section { padding-left: 24px; padding-right: 24px; }
+      footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-logo">KA</div>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#certificates">Certificates</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      Available for opportunities
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="hero-content">
+      <div class="hero-tag">
+        <span>⬡</span>
+        Computer Science Student · Shaqra University
+      </div>
+      <h1 class="hero-name">
+        Khalid<br/>
+        <span>Alruqi</span>
+      </h1>
+      <p class="hero-title">// Developer &amp; Networking Enthusiast — Level 06</p>
+      <p class="hero-desc">
+        A Computer Science student at Shaqra University with a passion for
+        building on the web and exploring networks. Certified by Cisco Networking
+        Academy across Python, networking, IoT, and web technologies.
+      </p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-primary">↓ Get in touch</a>
+        <a href="https://github.com/o8bo" target="_blank" class="btn btn-ghost">⌥ GitHub</a>
+        <a href="https://www.linkedin.com/in/khalid-alruqi-313b57381" target="_blank" class="btn btn-ghost">↗ LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="section-label">01 / Capabilities</div>
+    <h2 class="section-title">Technical Skills</h2>
+    <div class="skills-grid">
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🐍</div>
+        <div class="skill-name">Python</div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="width:80%; --delay:0.3s;"></div>
+        </div>
+        <div class="skill-pct">80%</div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🌐</div>
+        <div class="skill-name">HTML</div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="width:80%; --delay:0.45s;"></div>
+        </div>
+        <div class="skill-pct">80%</div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🎨</div>
+        <div class="skill-name">CSS</div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="width:100%; --delay:0.6s; background: linear-gradient(90deg, #00e5ff, #7b61ff, #ff6b6b);"></div>
+        </div>
+        <div class="skill-pct">100%</div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🗄️</div>
+        <div class="skill-name">SQL</div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="width:60%; --delay:0.75s;"></div>
+        </div>
+        <div class="skill-pct">60%</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section id="education">
+    <div class="section-label">02 / Background</div>
+    <h2 class="section-title">Education</h2>
+    <div class="edu-card reveal">
+      <div class="edu-year">2023 — Present</div>
+      <div class="edu-body">
+        <div class="edu-degree">B.Sc. Computer Science</div>
+        <div class="edu-school">Shaqra University · College of Computing and Information Technology</div>
+        <div class="edu-tag">Level 06 / Undergraduate</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Certificates -->
+  <section id="certificates">
+    <div class="section-label">03 / Credentials</div>
+    <h2 class="section-title">Cisco Certificates</h2>
+    <div class="certs-grid">
+
+      <div class="cert-card reveal">
+        <div class="cert-issuer">
+          <div class="cisco-badge">PI</div>
+          <div class="cert-issuer-text">Cisco Networking Academy</div>
+        </div>
+        <div class="cert-name">Python Essentials 1</div>
+        <div class="cert-meta">
+          <span class="cert-date">24 Dec 2024</span>
+          <span class="cert-id">26b1d289…</span>
+        </div>
+      </div>
+
+      <div class="cert-card reveal">
+        <div class="cert-issuer">
+          <div class="cisco-badge">PT</div>
+          <div class="cert-issuer-text">Cisco · Shaqra University</div>
+        </div>
+        <div class="cert-name">Getting Started with Cisco Packet Tracer</div>
+        <div class="cert-meta">
+          <span class="cert-date">15 Apr 2025</span>
+          <span class="cert-id">846e244f…</span>
+        </div>
+      </div>
+
+      <div class="cert-card reveal">
+        <div class="cert-issuer">
+          <div class="cisco-badge">PT</div>
+          <div class="cert-issuer-text">Cisco · Shaqra University</div>
+        </div>
+        <div class="cert-name">Exploring Networking with Cisco Packet Tracer</div>
+        <div class="cert-meta">
+          <span class="cert-date">03 May 2025</span>
+          <span class="cert-id">520a557a…</span>
+        </div>
+      </div>
+
+      <div class="cert-card reveal">
+        <div class="cert-issuer">
+          <div class="cisco-badge">IoT</div>
+          <div class="cert-issuer-text">Cisco · Shaqra University</div>
+        </div>
+        <div class="cert-name">Exploring Internet of Things with Cisco Packet Tracer</div>
+        <div class="cert-meta">
+          <span class="cert-date">03 May 2025</span>
+          <span class="cert-id">8978a346…</span>
+        </div>
+      </div>
+
+      <div class="cert-card reveal">
+        <div class="cert-issuer">
+          <div class="cisco-badge" style="background: linear-gradient(135deg,#f7b731,#e55c00);">JS</div>
+          <div class="cert-issuer-text">Cisco · Shaqra University</div>
+        </div>
+        <div class="cert-name">HTML Essentials</div>
+        <div class="cert-meta">
+          <span class="cert-date">17 Mar 2026</span>
+          <span class="cert-id">JS Institute</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="section-label">04 / Connect</div>
+    <h2 class="section-title">Get In Touch</h2>
+    <div class="contact-grid">
+
+      <a href="mailto:wpn057548@gmail.com" class="contact-link reveal">
+        <div class="contact-icon">✉</div>
+        <div class="contact-info">
+          <div class="contact-type">Email</div>
+          <div class="contact-value">wpn057548@gmail.com</div>
+        </div>
+      </a>
+
+      <a href="https://www.linkedin.com/in/khalid-alruqi-313b57381" target="_blank" class="contact-link reveal">
+        <div class="contact-icon">in</div>
+        <div class="contact-info">
+          <div class="contact-type">LinkedIn</div>
+          <div class="contact-value">khalid-alruqi</div>
+        </div>
+      </a>
+
+      <a href="https://github.com/o8bo" target="_blank" class="contact-link reveal">
+        <div class="contact-icon">⌥</div>
+        <div class="contact-info">
+          <div class="contact-type">GitHub</div>
+          <div class="contact-value">github.com/o8bo</div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-copy">© 2026 Khalid Alruqi. All rights reserved.</div>
+    <div class="footer-tag">Built with <span>❤</span> · Shaqra, Saudi Arabia</div>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animCursor() {
+      cursor.style.left = mx - 6 + 'px';
+      cursor.style.top = my - 6 + 'px';
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx - 18 + 'px';
+      ring.style.top = ry - 18 + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    animCursor();
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => io.observe(el));
+
+    // Skill bar animation on scroll
+    const skillBars = document.querySelectorAll('.skill-bar-fill');
+    const sbObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.animationPlayState = 'running';
+        }
+      });
+    }, { threshold: 0.5 });
+    skillBars.forEach(b => { b.style.animationPlayState = 'paused'; sbObs.observe(b); });
+  </script>
+</body>
+</html>
